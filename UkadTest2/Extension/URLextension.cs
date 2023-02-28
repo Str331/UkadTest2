@@ -1,72 +1,60 @@
-﻿using System;
+﻿using AngleSharp.Html.Parser;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using UkadTest2.Entity;
+using uk.Helper;
 
-namespace UkadTest2.Extension
+namespace uk.Extension
 {
-    public static class URLextension
+    public class URLextension
     {
-        public static bool IsExist(string adress)
+        List<string> UncheckedAdress = new List<string>();
+        List<string> CheckedAdress = new List<string>();
+        Dictionary<string, long> ResponseTime = new Dictionary<string, long>();
+
+        public void Crawler(string URLadress)
         {
-            using (var client = new WebClient())
+            HTMLhelper helper = new HTMLhelper();
+            UncheckedAdress.Add(URLadress);
+            while (UncheckedAdress.Count > 0)
             {
                 try
                 {
-                    using (client.OpenRead(adress)) { return true; }
+                    string value = UncheckedAdress[0];
+                    UncheckedAdress.RemoveAt(0);
+                    CheckedAdress.Add(value);
+                    if (ResponseTime.ContainsKey(value))
+                    {
+                        Console.WriteLine($"Вiдгук URL: {value} = {ResponseTime[value]} ");
+                        continue;
+                    }
+                    (string, string, long) result = helper.HTMLloader(value);
+                    string Page = result.Item1;
+                    ResponseTime.Add(result.Item2, result.Item3);
+                    Console.WriteLine($"Вiдгук для URL: {value} {result.Item3}");
+
+                    var document = new HtmlParser().ParseDocument(Page);
+                    var LinkPage = document.QuerySelectorAll("a").Select(x => x.GetAttribute("href")).Where(y => !string.IsNullOrEmpty(y));
+                    var SortedLinks = LinkPage.Where(x => x.StartsWith(URLadress) || x.StartsWith('/')).Distinct();
+
+                    foreach(var elements in SortedLinks)
+                    {
+                        var links = new Uri(new Uri(URLadress), elements).AbsoluteUri;
+                        if (links.StartsWith(URLadress) && !UncheckedAdress.Contains(links))
+                            UncheckedAdress.Add(links);
+                    }
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
-                    return false;
+                    continue;
                 }
             }
+            URLadresses = CheckedAdress;
         }
-        public static void OrderByResponse(List<URLadress> adressList)
-        {
-            try
-            {
-                foreach (var adresses in adressList.OrderBy(x => x.TimeElapse))
-                    Console.WriteLine($"{adresses.Name} - Timing(ms): {adresses.TimeElapse}\n");
-            }
-            catch (Exception e) { Console.WriteLine(e.Message); }
-        }
-
-        public static void Print(List<string> adressList)
-        {
-            try
-            {
-                foreach (var adresses in adressList)
-                    Console.WriteLine(adresses);
-            }
-            catch (Exception e) { Console.WriteLine(e.Message); }
-        }
-
-        public static long ResponseTime(string adress)
-        {
-            try
-            {
-                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(adress);
-                Stopwatch stopwatch = new Stopwatch();
-
-                stopwatch.Start();
-                HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
-                webResponse.Close();
-                stopwatch.Stop();
-
-                return stopwatch.ElapsedMilliseconds;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return -1;
-            }
-        }
-
-        public static string URLtoSitemap(string adress) => $"{adress}/sitemap.xml";
+        public List<string> URLadresses { get; set; }
     }
 }
