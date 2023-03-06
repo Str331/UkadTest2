@@ -1,10 +1,12 @@
-﻿using System;
+﻿using AngleSharp.Dom;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using uk.Extension;
 
 namespace uk.Helper
 {
@@ -30,12 +32,13 @@ namespace uk.Helper
                     HTMLpage = response;
 
                 ResponseTime =stopwatch.ElapsedMilliseconds;
+                
             }
             catch(Exception e)
             {
                 Console.WriteLine(e.Message);
             }
-            return result =(HTMLpage,adress,ResponseTime);
+            return result = (HTMLpage, adress, ResponseTime);
         }
     }
 }

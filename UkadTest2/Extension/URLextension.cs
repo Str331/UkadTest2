@@ -14,6 +14,7 @@ namespace uk.Extension
         List<string> UncheckedAdress = new List<string>();
         List<string> CheckedAdress = new List<string>();
         Dictionary<string, long> ResponseTime = new Dictionary<string, long>();
+        List<string> URLadresses { get; set; }
 
         public void Crawler(string URLadress)
         {
@@ -23,6 +24,7 @@ namespace uk.Extension
             {
                 try
                 {
+                    var sot = ResponseTime.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
                     string value = UncheckedAdress[0];
                     UncheckedAdress.RemoveAt(0);
                     CheckedAdress.Add(value);
@@ -55,6 +57,5 @@ namespace uk.Extension
             }
             URLadresses = CheckedAdress;
         }
-        public List<string> URLadresses { get; set; }
     }
 }
