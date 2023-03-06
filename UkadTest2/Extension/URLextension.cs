@@ -28,13 +28,13 @@ namespace uk.Extension
                     CheckedAdress.Add(value);
                     if (ResponseTime.ContainsKey(value))
                     {
-                        Console.WriteLine($"Вiдгук URL: {value} = {ResponseTime[value]} ");
+                        Console.WriteLine($"Response for URL: {value} = {ResponseTime[value]} ");
                         continue;
                     }
                     (string, string, long) result = helper.HTMLloader(value);
                     string Page = result.Item1;
                     ResponseTime.Add(result.Item2, result.Item3);
-                    Console.WriteLine($"Вiдгук для URL: {value} {result.Item3}");
+                    Console.WriteLine($"Response for URL: {value} {result.Item3}");
 
                     var document = new HtmlParser().ParseDocument(Page);
                     var LinkPage = document.QuerySelectorAll("a").Select(x => x.GetAttribute("href")).Where(y => !string.IsNullOrEmpty(y));

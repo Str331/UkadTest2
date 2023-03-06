@@ -40,7 +40,7 @@ namespace uk.Extension
                     CheckedAdress.Add(value);
                     if (ResponseTime.ContainsKey(value))
                     {
-                        Console.WriteLine($"Час вiдповiдi {value} {ResponseTime[value]}");
+                        Console.WriteLine($"Response time {value} {ResponseTime[value]}");
                         continue;
                     }
 
@@ -51,7 +51,7 @@ namespace uk.Extension
 
                     string Page = result.Item1;
                     ResponseTime.Add(result.Item2, result.Item3);
-                    Console.WriteLine($"Час вiдпoвiдi {value} {result.Item3}");
+                    Console.WriteLine($"Response time {value} {result.Item3}");
 
                     if (Page.Contains("<loc>"))
                     {

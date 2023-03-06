@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Xml;
 using uk.Extension;
 
-Console.WriteLine("Введiть URL-адрес");
+Console.WriteLine("Enter URL-adress");
 string URL = Console.ReadLine();
 
 URLextension url = new URLextension();
